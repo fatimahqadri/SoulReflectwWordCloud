@@ -1,0 +1,32 @@
+{
+  "name": "soulreflect",
+  "version": "1.0.0",
+  "description": "A journaling tool for introspection",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manahilmurt/manahilmurt.github.io.git"
+  },
+  "keywords": [
+    "journal",
+    "introspection"
+  ],
+  "author": "manahil murtaza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manahilmurt/manahilmurt.github.io/issues"
+  },
+  "homepage": "https://github.com/manahilmurt/manahilmurt.github.io#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "node-fetch": "^3.3.2",
+    "react": "^18.3.1"
+  }
+}
