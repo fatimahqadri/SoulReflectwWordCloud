@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulReflect</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lobster&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js for Mood Graph -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-cloud/build/d3.layout.cloud.min.js"></script>
+
+</head>
+<body>
+    <div id="home-page" class="page">
+        <!-- Top Navigation and Logo -->
+        <header class="top-navigation">
+            <div class="logo-summary">
+                <h1>SoulReflect</h1>
+                <p>Your journey to self-discovery and emotional well-being starts here.</p>
+            </div>
+            <div class="nav-buttons">
+                <button onclick="navigateTo('about')">About</button>
+                <button onclick="navigateTo('main-journaling')">Journaling</button>
+                <button onclick="navigateTo('word-cloud')">Word Cloud</button> <!-- New Button -->
+            </div>
+        </header>
+    
+        <!-- Main Content with Title and Prompts -->
+        <div class="home-content">
+            <div class="prompts-container">
+                <h2 class="prompts-title">What would you like to focus on in your journaling today?</h2>
+                <section class="options">
+                    <button class="option-btn" data-topic="Reflect on today" onclick="startJournalEntry('Reflect on today')">Reflect on today</button>
+                    <button class="option-btn" data-topic="Set new intentions" onclick="startJournalEntry('Set new intentions')">Set new intentions</button>
+                    <button class="option-btn" data-topic="Explore emotions" onclick="startJournalEntry('Explore emotions')">Explore emotions</button>
+                    <button class="option-btn" data-topic="Mindfulness & Calm" onclick="startJournalEntry('Mindfulness & Calm')">Mindfulness & Calm</button>
+                </section>
+                                                       
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Section -->
+    <div id="about-page" class="page hidden">
+        <h2>About SoulReflect</h2>
+        <p>SoulReflect is an AI-powered journaling tool designed to help you explore your emotions, reflect on your thoughts, and embark on a journey of self-discovery. Through personalized prompts and guided reflections, SoulReflect encourages you to develop a deeper understanding of yourself and your emotional well-being.</p>
+        <button onclick="navigateTo('home')">Back to Home</button>
+    </div>
+
+    <!-- Word Cloud Page -->
+    <div id="word-cloud-page" style="display: none;">
+        <h1>Your Word Cloud</h1>
+        <div id="word-cloud"></div>
+        <button onclick="navigateTo('home')">Back to Home</button>
+    </div>
+
+    <!-- Main Journaling Section -->
+    <section id="main-journaling-section" class="page hidden">
+        <div class="journal-container">
+            <!-- Sidebar for past journal entries 
+            <aside class="journal-sidebar hidden" id="journal-sidebar">
+                <h3>Journal Entries</h3>
+                <input
+                    type="text"
+                    id="search-bar"
+                    placeholder="Search journal entries..."
+                    oninput="filterJournalEntries()"
+                />
+                <ul id="journal-entries"></ul>
+            </aside>
+        -->
+            <aside class="journal-sidebar hidden" id="journal-sidebar">
+                <h3>Journal Entries</h3>
+                <input
+                    type="text"
+                    id="search-bar"
+                    placeholder="Search journal entries..."
+                    oninput="filterJournalEntries()"
+                />
+                <ul id="journal-entries"></ul>
+                <button onclick="navigateToWordCloud()">Generate Word Cloud</button>
+            </aside>
+        
+
+            <!-- Main Chat Section -->
+            <div class="chat-area">
+                <div class="chat-box-header">
+                    <button class="back-home" onclick="goBackHome()">Back to Home</button>
+                    <h2>SoulReflect AI</h2>
+                    <button class="view-journal-btn" onclick="toggleJournalSidebar()">View Journal Entries</button>
+                    <button class="give-summary-btn" onclick="giveSummary()">Give Me Summary</button>
+                    <button class="generate-mood-btn" onclick="generateMoodGraph()">Generate Mood Graph</button>
+                </div>
+                <div class="chat-box-body" id="chat-box"></div>
+            </div>
+
+            <!-- Mood Graph Container -->
+            <!-- Mood Graph Container -->
+            <div id="mood-graph-container">
+                <h3>Mood Analysis Graph</h3>
+                <!-- The canvas will be dynamically added here -->
+            </div>
+<!--
+              Word Cloud Section //PREVIOUS MANAHIL CODE
+             <div id="word-cloud-section">
+                <h3>Word Cloud</h3>
+                <div id="word-cloud-container"></div>
+                <button onclick="fetchWordCloud()">Generate Word Cloud</button>
+            </div>
+        -->
+
+            <!-- Word Cloud Fetching -->
+            <script>
+                function fetchWordCloud() {
+                    const words = [
+                        { text: "reflection", size: 50 },
+                        { text: "calm", size: 40 },
+                        { text: "focus", size: 30 },
+                        { text: "introspection", size: 35 },
+                        { text: "growth", size: 25 }
+                    ];
+
+                    const layout = d3.layout.cloud()
+                        .size([500, 300])
+                        .words(words)
+                        .padding(5)
+                        .rotate(() => (Math.random() > 0.5 ? 0 : 90))
+                        .fontSize(d => d.size)
+                        .on("end", draw);
+
+                    layout.start();
+
+                    function draw(words) {
+                        d3.select("#word-cloud-container")
+                            .html("") // Clear any existing word cloud
+                            .append("svg")
+                            .attr("width", 500)
+                            .attr("height", 300)
+                            .append("g")
+                            .attr("transform", "translate(250,150)")
+                            .selectAll("text")
+                            .data(words)
+                            .enter()
+                            .append("text")
+                            .style("font-size", d => `${d.size}px`)
+                            .style("font-family", "Roboto, sans-serif")
+                            .style("fill", () => `hsl(${Math.random() * 360}, 70%, 50%)`)
+                            .attr("text-anchor", "middle")
+                            .attr("transform", d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
+                            .text(d => d.text);
+                    }
+                }
+            </script>
+            
+
+        </div>
+    </section>
+
+    <!-- Footer for Chat Input -->
+    <div id="chat-box-footer-container" class="hidden">
+        <div class="chat-box-footer">
+            <input type="text" id="user-input" placeholder="Ask a question or start journaling..." onkeypress="handleKeyPress(event)" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+    <script>
+        // Function to handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Function to navigate back home and save journal entry
+        function goBackHome() {
+            saveJournalEntry();
+            navigateTo('home');
+        }
+    </script>
+</body>
+</html>
